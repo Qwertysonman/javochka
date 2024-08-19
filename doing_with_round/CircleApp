@@ -1,0 +1,61 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+public class CircleApp extends JPanel {
+
+private static final int CIRCLE_RADIUS = 20;
+private final List<Point> circles = new ArrayList<>();
+
+public CircleApp() {
+// Обработчик мыши для добавления и удаления кругов
+addMouseListener(new MouseAdapter() {
+@Override
+public void mousePressed(MouseEvent e) {
+if (SwingUtilities.isLeftMouseButton(e)) {
+// Добавляем круг в точке клика
+circles.add(e.getPoint());
+repaint();
+} else if (SwingUtilities.isMiddleMouseButton(e)) {
+// Удаляем круг, если он находится в точке клика
+removeCircleAt(e.getPoint());
+repaint();
+}
+}
+});
+}
+
+private void removeCircleAt(Point point) {
+Iterator<Point> iterator = circles.iterator();
+while (iterator.hasNext()) {
+Point circle = iterator.next();
+if (circle.distance(point) <= CIRCLE_RADIUS) {
+iterator.remove();
+break; // Удалить только первый найденный круг
+}
+}
+}
+
+@Override
+protected void paintComponent(Graphics g) {
+super.paintComponent(g);
+g.setColor(Color.RED);
+for (Point circle : circles) {
+g.fillOval(circle.x - CIRCLE_RADIUS, circle.y - CIRCLE_RADIUS, CIRCLE_RADIUS * 2, CIRCLE_RADIUS * 2);
+}
+}
+
+public static void main(String[] args) {
+JFrame frame = new JFrame("Circle Drawer");
+CircleApp panel = new CircleApp();
+
+frame.add(panel);
+frame.setSize(800, 600);
+frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+frame.setVisible(true);
+}
+}
