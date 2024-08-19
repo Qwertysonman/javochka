@@ -1,0 +1,78 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
+
+public class SolarSystemSimulation extends JPanel implements ActionListener {
+
+private Image sunImage;
+private Image earthImage;
+
+private int centerX, centerY; // Центр окна, где будет находиться Солнце
+private int earthX, earthY; // Позиция Земли
+private double angle = 0; // Угол вращения Земли
+
+private Timer timer;
+
+public SolarSystemSimulation() {
+try {
+// Загружаем изображения Солнца и Земли
+sunImage = ImageIO.read(new File("sun.png"));
+earthImage = ImageIO.read(new File("earth.png"));
+} catch (IOException e) {
+System.out.println("Image not found or unable to read the image file.");
+e.printStackTrace();
+}
+
+timer = new Timer(20, this); // Таймер для обновления движения Земли
+timer.start();
+}
+
+@Override
+protected void paintComponent(Graphics g) {
+super.paintComponent(g);
+
+// Вычисляем центр окна
+centerX = getWidth() / 2;
+centerY = getHeight() / 2;
+
+if (sunImage != null && earthImage != null) {
+// Рисуем Солнце в центре окна
+int sunWidth = sunImage.getWidth(this);
+int sunHeight = sunImage.getHeight(this);
+g.drawImage(sunImage, centerX - sunWidth / 2, centerY - sunHeight / 2, this);
+
+// Рисуем Землю в вычисленном положении
+g.drawImage(earthImage, earthX, earthY, this);
+}
+}
+
+@Override
+public void actionPerformed(ActionEvent e) {
+// Радиус орбиты Земли
+int orbitRadius = 150;
+
+// Вычисляем положение Земли на орбите с учетом угла
+earthX = centerX + (int) (orbitRadius * Math.cos(angle)) - earthImage.getWidth(this) / 2;
+earthY = centerY + (int) (orbitRadius * Math.sin(angle)) - earthImage.getHeight(this) / 2;
+
+// Увеличиваем угол для движения Земли
+angle += 0.01;
+
+// Перерисовываем компонент с обновленным положением Земли
+repaint();
+}
+
+public static void main(String[] args) {
+JFrame frame = new JFrame("Solar System Simulation");
+SolarSystemSimulation panel = new SolarSystemSimulation();
+
+frame.add(panel);
+frame.setSize(800, 600); // Размер окна
+frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+frame.setVisible(true);
+}
+}
