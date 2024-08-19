@@ -1,0 +1,81 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
+
+public class ImageMove extends JPanel {
+
+private Image image;
+private int imageX = 0;
+private int imageY = 0;
+private final int STEP = 50;
+
+public ImageMove() {
+try {
+// Загрузите изображение с вашего компьютера или сети
+image = ImageIO.read(new File("image.png"));
+} catch (IOException e) {
+System.out.println("Image not found or unable to read the image file.");
+e.printStackTrace();
+}
+
+// Установка фокуса для панели для обработки событий клавиатуры
+setFocusable(true);
+addKeyListener(new KeyAdapter() {
+@Override
+public void keyReleased(KeyEvent e) {
+int key = e.getKeyCode();
+if (key == KeyEvent.VK_LEFT) {
+moveLeft();
+} else if (key == KeyEvent.VK_RIGHT) {
+moveRight();
+} else if (key == KeyEvent.VK_UP) {
+moveUp();
+} else if (key == KeyEvent.VK_DOWN) {
+moveDown();
+}
+}
+});
+}
+
+private void moveLeft() {
+imageX = Math.max(imageX - STEP, 0);
+repaint();
+}
+
+private void moveRight() {
+imageX = Math.min(imageX + STEP, getWidth() - image.getWidth(this));
+repaint();
+}
+
+private void moveUp() {
+imageY = Math.max(imageY - STEP, 0);
+repaint();
+}
+
+private void moveDown() {
+imageY = Math.min(imageY + STEP, getHeight() - image.getHeight(this));
+repaint();
+}
+
+@Override
+protected void paintComponent(Graphics g) {
+super.paintComponent(g);
+if (image != null) {
+g.drawImage(image, imageX, imageY, this);
+}
+}
+
+public static void main(String[] args) {
+JFrame frame = new JFrame("Image Movement Example");
+ImageMove panel = new ImageMove();
+
+frame.add(panel);
+frame.setSize(800, 600);
+frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+frame.setVisible(true);
+}
+}
