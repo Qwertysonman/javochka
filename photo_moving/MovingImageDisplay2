@@ -1,0 +1,63 @@
+import javax.swing.*;
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class MovingImageDisplay2 extends JPanel implements ActionListener {
+
+private Image image;
+private int x = 0;
+private int y = 0;
+private int direction = 0; // 0 = right, 1 = down, 2 = left, 3 = up
+
+private final int SPEED = 2; // Speed of movement
+private final Timer timer;
+
+public MovingImageDisplay() {
+try {
+// Load the image from the file system
+image = ImageIO.read(new File("photo.png"));
+} catch (IOException e) {
+System.out.println("Image not found or unable to read the image file.");
+e.printStackTrace();
+}
+
+timer = new Timer(10, this);
+timer.start();
+}
+
+@Override
+protected void paintComponent(Graphics g) {
+super.paintComponent(g);
+
+if (image != null) {
+g.drawImage(image, x, y, this);
+}
+}
+
+@Override
+public void actionPerformed(ActionEvent e) {
+if (image != null) {
+int width = getWidth();
+int height = getHeight();
+int imgWidth = image.getWidth(this);
+int imgHeight = image.getHeight(this);
+
+switch (direction) {
+case 0: // Move right
+x += SPEED;
+if (x + imgWidth >= width) {
+x = width - imgWidth;
+direction = 1; // Change direction to down
+}
+break;
+case 1: // Move down
+y += SPEED;
+if (y + imgHeight >= height) {
+y = height - imgHeight;
+direction = 2; // Change direction to left
+}
+break;
