@@ -1,0 +1,33 @@
+import javax.swing.*;
+
+public class ScreenResolutionApp {
+
+public static void main(String[] args) {
+// Массив возможных разрешений экрана
+String[] resolutions = {"800x600", "1024x768", "1280x720", "1920x1080"};
+
+// Выпадающий список с разрешениями
+JComboBox<String> resolutionList = new JComboBox<>(resolutions);
+
+// Диалоговое окно с выбором разрешения
+int option = JOptionPane.showConfirmDialog(null, resolutionList, "Выберите разрешение экрана", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+
+// Если пользователь нажал "OK"
+if (option == JOptionPane.OK_OPTION) {
+String selectedResolution = (String) resolutionList.getSelectedItem();
+
+// Разделяем выбранное разрешение на ширину и высоту
+String[] dimensions = selectedResolution.split("x");
+int width = Integer.parseInt(dimensions[0]);
+int height = Integer.parseInt(dimensions[1]);
+
+// Создание и настройка окна с выбранным разрешением
+JFrame frame = new JFrame("Главное окно");
+frame.setSize(width, height);
+frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+frame.setVisible(true);
+} else {
+System.exit(0); // Завершаем программу, если пользователь отменил выбор
+}
+}
+}
