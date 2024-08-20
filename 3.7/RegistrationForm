@@ -1,0 +1,119 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class RegistrationForm extends JFrame {
+    public RegistrationForm() {
+        // Заголовок окна
+        super("Регистрация на мероприятие");
+
+        // Установка макета
+        setLayout(new GridLayout(11, 2, 10, 10)); // 11 строк, 2 столбца, с отступом 10 пикселей
+
+        // Метки и поля для ввода данных
+        JLabel nameLabel = new JLabel("Имя:");
+        JTextField nameField = new JTextField();
+
+        JLabel ageLabel = new JLabel("Возраст:");
+        JSpinner ageSpinner = new JSpinner(new SpinnerNumberModel(18, 0, 100, 1)); // значение, мин, макс, шаг
+
+        JLabel genderLabel = new JLabel("Пол:");
+        String[] genders = {"Мужской", "Женский", "Другое"};
+        JComboBox<String> genderComboBox = new JComboBox<>(genders);
+
+        JLabel emailLabel = new JLabel("Email:");
+        JTextField emailField = new JTextField();
+
+        JLabel phoneLabel = new JLabel("Телефон:");
+        JTextField phoneField = new JTextField();
+
+        JLabel cityLabel = new JLabel("Город:");
+        JTextField cityField = new JTextField();
+
+        JLabel foodLabel = new JLabel("Питание:");
+        String[] foodOptions = {"Вегетарианец", "Не вегетарианец", "Веган"};
+        JComboBox<String> foodComboBox = new JComboBox<>(foodOptions);
+
+        JLabel accommodationLabel = new JLabel("Необходима ли гостиница:");
+        JCheckBox accommodationCheckBox = new JCheckBox("Да");
+
+        JLabel sessionsLabel = new JLabel("Выберите сессии:");
+        String[] sessions = {"Утро", "День", "Вечер"};
+        JList<String> sessionsList = new JList<>(sessions);
+        sessionsList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+
+        JLabel commentsLabel = new JLabel("Комментарии:");
+        JTextArea commentsArea = new JTextArea(3, 20);
+
+        // Кнопка отправки
+        JButton submitButton = new JButton("Отправить");
+
+        // Добавляем элементы на форму
+        add(nameLabel);
+        add(nameField);
+
+        add(ageLabel);
+        add(ageSpinner);
+
+        add(genderLabel);
+        add(genderComboBox);
+
+        add(emailLabel);
+        add(emailField);
+
+        add(phoneLabel);
+        add(phoneField);
+
+        add(cityLabel);
+        add(cityField);
+
+        add(foodLabel);
+        add(foodComboBox);
+
+        add(accommodationLabel);
+        add(accommodationCheckBox);
+
+        add(sessionsLabel);
+        add(new JScrollPane(sessionsList)); // для скроллинга
+
+        add(commentsLabel);
+        add(new JScrollPane(commentsArea)); // для скроллинга
+
+        add(new JLabel()); // пустой элемент для выравнивания
+        add(submitButton);
+
+        // Обработчик события нажатия на кнопку "Отправить"
+        submitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                StringBuilder result = new StringBuilder();
+
+                result.append("Имя: ").append(nameField.getText()).append("\n");
+                result.append("Возраст: ").append(ageSpinner.getValue()).append("\n");
+                result.append("Пол: ").append(genderComboBox.getSelectedItem()).append("\n");
+                result.append("Email: ").append(emailField.getText()).append("\n");
+                result.append("Телефон: ").append(phoneField.getText()).append("\n");
+                result.append("Город: ").append(cityField.getText()).append("\n");
+                result.append("Питание: ").append(foodComboBox.getSelectedItem()).append("\n");
+                result.append("Необходима ли гостиница: ").append(accommodationCheckBox.isSelected() ? "Да" : "Нет").append("\n");
+                result.append("Выбранные сессии: ").append(String.join(", ", sessionsList.getSelectedValuesList())).append("\n");
+                result.append("Комментарии: ").append(commentsArea.getText()).append("\n");
+
+                // Показать информацию в информационном окне
+                JOptionPane.showMessageDialog(RegistrationForm.this, result.
+toString(), "Результаты регистрации", JOptionPane.INFORMATION_MESSAGE);
+            }
+        });
+
+        // Настройки окна
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(400, 600); // Размеры окна
+        setLocationRelativeTo(null); // Центрирование окна на экране
+        setVisible(true);
+    }
+
+    public static void main(String[] args) {
+        new RegistrationForm();
+    }
+}
