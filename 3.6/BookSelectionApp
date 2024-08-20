@@ -1,0 +1,47 @@
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class BookSelectionApp {
+
+public static void main(String[] args) {
+// Создаем главное окно
+JFrame frame = new JFrame("Выбор книг");
+frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+frame.setSize(300, 150);
+frame.setLayout(null);
+
+// Создаем надпись
+JLabel label = new JLabel("Сколько книг вы возьмете в лагерь?");
+label.setBounds(50, 10, 200, 20);
+frame.add(label);
+
+// Создаем элемент JSpinner
+JSpinner spinner = new JSpinner(new SpinnerNumberModel(1, 0, 100, 1));
+spinner.setBounds(50, 40, 60, 25);
+frame.add(spinner);
+
+// Создаем кнопку "Ответить"
+JButton button = new JButton("Ответить");
+button.setBounds(120, 40, 100, 25);
+frame.add(button);
+
+// Создаем надпись для отображения ответа
+JLabel answerLabel = new JLabel("Ответ:");
+answerLabel.setBounds(50, 80, 200, 20);
+frame.add(answerLabel);
+
+// Обработчик нажатия на кнопку
+button.addActionListener(new ActionListener() {
+@Override
+public void actionPerformed(ActionEvent e) {
+int selectedBooks = (int) spinner.getValue();
+answerLabel.setText("Ответ: Вы выбрали " + selectedBooks + " книг(и).");
+}
+});
+
+// Показываем окно
+frame.setLocationRelativeTo(null); // Центрируем окно на экране
+frame.setVisible(true);
+}
+}
