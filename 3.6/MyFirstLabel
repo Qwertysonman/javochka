@@ -1,0 +1,25 @@
+import javax.swing.*;
+import java.awt.*;
+
+public class MyFirstLabel {
+public static void main(String[] args) {
+// Создаем основное окно
+JFrame frame = new JFrame("Мое первое окно");
+frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+frame.setSize(600, 400); // Произвольный размер окна
+
+// Создаем JLabel с текстом
+JLabel label = new JLabel("Моя первая надпись!", SwingConstants.CENTER);
+
+// Настройка шрифта: выбираем курсив, размер 50
+Font font = new Font("Serif", Font.ITALIC, 50);
+label.setFont(font);
+
+// Добавляем JLabel в центр окна
+frame.add(label);
+
+// Показываем окно
+frame.setLocationRelativeTo(null); // Центрируем окно на экране
+frame.setVisible(true);
+}
+}
