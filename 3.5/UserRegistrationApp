@@ -1,0 +1,81 @@
+import javax.swing.*;
+
+public class UserRegistrationApp {
+
+public static void main(String[] args) {
+// Шаг 1: Приветственное окно с предложением зарегистрироваться
+int registerOption = JOptionPane.showConfirmDialog(null,
+"Добро пожаловать! Вы хотите зарегистрироваться в программе?",
+"Регистрация",
+JOptionPane.YES_NO_OPTION);
+
+if (registerOption != JOptionPane.YES_OPTION) {
+System.exit(0); // Завершить программу, если пользователь нажал "Нет"
+}
+
+// Шаг 2: Ввод логина
+String login = "";
+while (true) {
+login = JOptionPane.showInputDialog(null, "Введите логин (более 5 символов, без пробелов):", "Регистрация", JOptionPane.PLAIN_MESSAGE);
+
+if (login != null && login.length() > 5 && !login.contains(" ")) {
+break;
+}
+JOptionPane.showMessageDialog(null, "Некорректный логин. Попробуйте снова.", "Ошибка", JOptionPane.ERROR_MESSAGE);
+}
+
+// Шаг 3: Ввод пароля
+String password = "";
+while (true) {
+JPasswordField passwordField = new JPasswordField();
+int option = JOptionPane.showConfirmDialog(null, passwordField, "Введите пароль (более 8 символов, без пробелов, хотя бы одна буква и одна цифра):", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+
+if (option == JOptionPane.OK_OPTION) {
+password = new String(passwordField.getPassword());
+if (isValidPassword(password)) {
+break;
+}
+JOptionPane.showMessageDialog(null, "Некорректный пароль. Попробуйте снова.", "Ошибка", JOptionPane.ERROR_MESSAGE);
+} else {
+System.exit(0); // Завершить программу, если пользователь нажал "Отмена"
+}
+}
+
+// Шаг 4: Повторение пароля
+while (true) {
+JPasswordField confirmPasswordField = new JPasswordField();
+int option = JOptionPane.showConfirmDialog(null, confirmPasswordField, "Повторите пароль:", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+
+if (option == JOptionPane.OK_OPTION) {
+String confirmPassword = new String(confirmPasswordField.getPassword());
+if (password.equals(confirmPassword)) {
+break;
+}
+JOptionPane.showMessageDialog(null, "Пароли не совпадают. Попробуйте снова.", "Ошибка", JOptionPane.ERROR_MESSAGE);
+} else {
+System.exit(0); // Завершить программу, если пользователь нажал "Отмена"
+}
+}
+
+// Шаг 5: Успешная регистрация
+JOptionPane.showMessageDialog(null, "Регистрация успешно завершена!", "Успех", JOptionPane.INFORMATION_MESSAGE);
+}
+
+// Метод проверки пароля
+private static boolean isValidPassword(String password) {
+if (password.length() <= 8 || password.contains(" ")) {
+return false;
+}
+boolean hasLetter = false;
+boolean hasDigit = false;
+for (char c : password.toCharArray()) {
+if (Character.isLetter(c)) {
+hasLetter = true;
+}
+if (Character.isDigit(c)) {
+hasDigit = true;
+}
+}
+return hasLetter && hasDigit;
+}
+}
