@@ -1,0 +1,42 @@
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class ClickerApp {
+private int clickCount = 0; // Переменная для хранения количества нажатий
+
+public static void main(String[] args) {
+new ClickerApp().createAndShowGUI(); // Запуск приложения
+}
+
+private void createAndShowGUI() {
+// Создаем главное окно
+JFrame frame = new JFrame("Кликер");
+frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+frame.setSize(300, 200); // Размер окна
+
+// Создаем надпись
+JLabel label = new JLabel("Кнопка нажата 0 раз", SwingConstants.CENTER);
+
+// Создаем кнопку
+JButton button = new JButton("Нажми меня");
+
+// Обработчик нажатия на кнопку
+button.addActionListener(new ActionListener() {
+@Override
+public void actionPerformed(ActionEvent e) {
+clickCount++; // Увеличиваем количество нажатий
+label.setText("Кнопка нажата " + clickCount + " раз"); // Обновляем текст надписи
+}
+});
+
+// Добавляем элементы в окно
+frame.setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS));
+frame.add(label);
+frame.add(button);
+
+// Показываем окно
+frame.setLocationRelativeTo(null); // Центрируем окно на экране
+frame.setVisible(true);
+}
+}
