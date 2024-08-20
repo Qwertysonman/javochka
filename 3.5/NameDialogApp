@@ -1,0 +1,18 @@
+import javax.swing.*;
+
+public class NameDialogApp {
+
+public static void main(String[] args) {
+// Создаем диалоговое окно с текстовым полем для ввода имени
+String name = JOptionPane.showInputDialog(null, "Введите ваше имя:", "Ввод имени", JOptionPane.QUESTION_MESSAGE);
+
+// Если пользователь не нажал "Отмена" и ввел имя
+if (name != null && !name.trim().isEmpty()) {
+// Отображаем информационное окно с введенным именем
+JOptionPane.showMessageDialog(null, "Здравствуйте, " + name + "!", "Приветствие", JOptionPane.INFORMATION_MESSAGE);
+} else {
+// Если имя не введено, выводим сообщение об этом
+JOptionPane.showMessageDialog(null, "Вы не ввели имя.", "Ошибка", JOptionPane.ERROR_MESSAGE);
+}
+}
+}
