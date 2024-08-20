@@ -1,0 +1,42 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+
+public class ResizableLabel {
+public static void main(String[] args) {
+// Создаем основное окно
+JFrame frame = new JFrame("Мое первое окно с слайдером");
+frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+frame.setSize(600, 400); // Произвольный размер окна
+frame.setLayout(new BorderLayout());
+
+// Создаем JLabel с текстом
+JLabel label = new JLabel("Моя первая надпись!", SwingConstants.CENTER);
+
+// Начальный шрифт
+Font font = new Font("Serif", Font.ITALIC, 50);
+label.setFont(font);
+
+// Создаем слайдер для изменения размера шрифта
+JSlider slider = new JSlider(JSlider.HORIZONTAL, 5, 100, 50); // Минимум 5, максимум 100, начальное значение 50
+slider.setMajorTickSpacing(10);
+slider.setMinorTickSpacing(1);
+slider.setPaintTicks(true);
+slider.setPaintLabels(true);
+
+// Обработчик событий для изменения размера шрифта
+slider.addChangeListener(e -> {
+int size = slider.getValue();
+Font newFont = label.getFont().deriveFont((float) size);
+label.setFont(newFont);
+});
+
+// Добавляем JLabel и слайдер в окно
+frame.add(label, BorderLayout.CENTER);
+frame.add(slider, BorderLayout.SOUTH);
+
+// Показываем окно
+frame.setLocationRelativeTo(null); // Центрируем окно на экране
+frame.setVisible(true);
+}
+}
