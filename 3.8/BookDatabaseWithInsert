@@ -1,0 +1,43 @@
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+public class BookDatabaseWithInsert {
+
+public static void main(String[] args) {
+// URL для подключения к базе данных SQLite
+String url = "jdbc:sqlite:books.db";
+
+// SQL-запросы для вставки данных
+String insertGenre = "INSERT INTO genres (genre) VALUES ('Fantasy');";
+String insertBook = "INSERT INTO books (title, year, author, genre_id) VALUES " +
+"('Harry Potter and the Philosopher\'s Stone', 1997, 'J.K. Rowling', 4);";
+
+// Путь к файлу, в который будут записаны SQL-запросы
+String filePath = "insert_queries.txt";
+
+try (Connection conn = DriverManager.getConnection(url);
+Statement stmt = conn.createStatement();
+BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+
+// Вставка данных в таблицу genres
+stmt.execute(insertGenre);
+// Вставка данных в таблицу books
+stmt.execute(insertBook);
+
+// Запись SQL-запросов в текстовый файл
+writer.write(insertGenre);
+writer.newLine();
+writer.write(insertBook);
+
+System.out.println("Данные успешно вставлены, SQL-запросы записаны в файл: " + filePath);
+
+} catch (SQLException | IOException e) {
+System.out.println("Ошибка: " + e.getMessage());
+}
+}
+}
