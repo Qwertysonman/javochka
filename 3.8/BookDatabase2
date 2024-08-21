@@ -1,0 +1,59 @@
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+public class BookDatabase {
+
+public static void main(String[] args) {
+// URL для подключения к базе данных SQLite
+String url = "jdbc:sqlite:books.db";
+
+// SQL-запросы для создания таблиц
+String createBooksTable = "CREATE TABLE IF NOT EXISTS books (" +
+"id INTEGER PRIMARY KEY AUTOINCREMENT," +
+"title VARCHAR(255) NOT NULL," +
+"year INTEGER," +
+"author VARCHAR(255) NOT NULL," +
+"genre_id INTEGER," +
+"FOREIGN KEY (genre_id) REFERENCES genres(id)" +
+");";
+
+String createGenresTable = "CREATE TABLE IF NOT EXISTS genres (" +
+"id INTEGER PRIMARY KEY AUTOINCREMENT," +
+"genre VARCHAR(100) NOT NULL" +
+");";
+
+// SQL-запросы для вставки данных
+String insertGenres = "INSERT INTO genres (genre) VALUES " +
+"('Fiction')," +
+"('Science Fiction')," +
+"('Historical');";
+
+String insertBooks = "INSERT INTO books (title, year, author, genre_id) VALUES " +
+"('1984', 1949, 'George Orwell', 2)," +
+"('To Kill a Mockingbird', 1960, 'Harper Lee', 1)," +
+"('Brave New World', 1932, 'Aldous Huxley', 2);";
+
+try (Connection conn = DriverManager.getConnection(url);
+Statement stmt = conn.createStatement()) {
+
+// Создание таблицы genres
+stmt.execute(createGenresTable);
+
+// Создание таблицы books
+stmt.execute(createBooksTable);
+
+// Вставка данных в таблицу genres
+stmt.execute(insertGenres);
+
+// Вставка данных в таблицу books
+stmt.execute(insertBooks);
+
+System.out.println("Таблицы созданы и данные вставлены успешно.");
+
+} catch (SQLException e) {
+System.out.println(e.getMessage());
+}
+}
+}
