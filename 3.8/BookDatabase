@@ -1,0 +1,52 @@
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.Statement;
+import java.sql.SQLException;
+
+public class BookDatabase {
+public static void main(String[] args) {
+Connection connection = null;
+Statement statement = null;
+
+try {
+// Создание соединения с базой данных
+connection = DriverManager.getConnection("jdbc:sqlite:books.db");
+System.out.println("Соединение с базой данных установлено.");
+
+// Создание таблицы books
+statement = connection.createStatement();
+String createTableSQL = "CREATE TABLE IF NOT EXISTS books (" +
+"id INTEGER PRIMARY KEY AUTOINCREMENT, " + // Идентификатор книги, автоинкремент
+"title TEXT NOT NULL, " + // Название книги, не может быть NULL
+"year INTEGER, " + // Год выпуска, может быть NULL
+"author TEXT NOT NULL);"; // Автор книги, не может быть NULL
+statement.executeUpdate(createTableSQL);
+System.out.println("Таблица 'books' создана.");
+
+// Вставка данных в таблицу books
+String insertBook1 = "INSERT INTO books (title, year, author) VALUES ('The Catcher in the Rye', 1951, 'J.D. Salinger');";
+String insertBook2 = "INSERT INTO books (title, year, author) VALUES ('To Kill a Mockingbird', 1960, 'Harper Lee');";
+String insertBook3 = "INSERT INTO books (title, year, author) VALUES ('1984', 1949, 'George Orwell');";
+
+statement.executeUpdate(insertBook1);
+statement.executeUpdate(insertBook2);
+statement.executeUpdate(insertBook3);
+
+System.out.println("Книги добавлены в таблицу.");
+
+} catch (SQLException e) {
+System.out.println(e.getMessage());
+} finally {
+try {
+if (statement != null) {
+statement.close();
+}
+if (connection != null) {
+connection.close();
+}
+} catch (SQLException ex) {
+System.out.println(ex.getMessage());
+}
+}
+}
+}
