@@ -1,0 +1,159 @@
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
+import javafx.stage.Stage;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+public class YandexMapApp extends Application {
+    private WebView webView;
+    private WebEngine webEngine;
+    private TextField searchField;
+    private ListView<String> resultList;
+    private TextArea detailsArea;
+    private Slider zoomSlider;
+    private ToggleGroup mapTypeGroup;
+    private CheckBox trafficLayer;
+
+    @Override
+    public void start(Stage primaryStage) {
+        // Создаем элементы интерфейса
+        searchField = new TextField();
+        Button searchButton = new Button("Поиск");
+        resultList = new ListView<>();
+        detailsArea = new TextArea();
+        detailsArea.setWrapText(true);
+
+        webView = new WebView();
+        webEngine = webView.getEngine();
+        loadMap();
+
+        zoomSlider = new Slider(1, 17, 10);
+        zoomSlider.valueProperty().addListener((obs, oldVal, newVal) -> {
+            webEngine.executeScript("map.setZoom(" + newVal.intValue() + ");");
+        });
+
+        RadioButton schemeButton = new RadioButton("Схема");
+        RadioButton satelliteButton = new RadioButton("Спутник");
+        mapTypeGroup = new ToggleGroup();
+        schemeButton.setToggleGroup(mapTypeGroup);
+        satelliteButton.setToggleGroup(mapTypeGroup);
+        schemeButton.setSelected(true);
+        mapTypeGroup.selectedToggleProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null) {
+                String type = schemeButton.isSelected() ? "map" : "satellite";
+                webEngine.executeScript("map.setType('" + type + "');");
+            }
+        });
+
+        trafficLayer = new CheckBox("Пробки");
+        trafficLayer.setOnAction(e -> {
+            boolean isSelected = trafficLayer.isSelected();
+            webEngine.executeScript("map.layers.get('traffic').setVisible(" + isSelected + ");");
+        });
+
+        // Обработчик кнопки поиска
+        searchButton.setOnAction(e -> searchLocation());
+
+        // Обработчик выбора элемента из списка
+        resultList.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null) {
+                displayDetails(newVal);
+            }
+        });
+
+        // Создаем макет интерфейса
+        VBox leftPane = new VBox(10, searchField, searchButton, resultList, detailsArea);
+        VBox rightPane = new VBox(10, webView, zoomSlider, schemeButton, satelliteButton, trafficLayer);
+        HBox root = new HBox(10, leftPane, rightPane);
+
+        // Настраиваем сцену и отображаем окно
+        Scene scene = new Scene(root, 800, 600);
+        primaryStage.setScene(scene);
+        primaryStage.setTitle("Yandex Map App");
+        primaryStage.show();
+    }
+
+    private void loadMap() {
+        // Инициализация карты через JavaScript
+        String mapHTML = "<!DOCTYPE html><html><head>" +
+                "<meta name=\"viewport\" content=\"initial-scale=1.0, user-scalable=no\">" +
+                "<script src=\"https://api-maps.yandex.ru/2.1/?apikey=<YOUR_API_KEY>&lang=ru_RU\" type=\"text/javascript\"></script>" +
+                "<style>html, body, #map { height: 100%; margin: 0; padding: 0; }</style>" +
+                "</head><body>" +
+                "<div id=\"map\"></div>" +
+                "<script type=\"text/javascript\">" +
+                "ymaps.ready(init);" +
+                "var map;" +
+                "function init() {" +
+                "    map = new ymaps.Map('map', {" +
+                "        center: [55.751574, 37.573856]," +
+                "        zoom: 10" +
+                "    });" +
+                "    map.layers.add(new ymaps.TrafficLayer());" +
+                "}" +
+                "</script>" +
+                "</body></html>";
+        webEngine.
+loadContent(mapHTML);
+    }
+
+    private void searchLocation() {
+        String query = searchField.getText().trim();
+        if (query.isEmpty()) {
+            return;
+        }
+
+        String apiUrl = "https://geocode-maps.yandex.ru/1.x/?apikey=<YOUR_API_KEY>&geocode=" + query + "&format=json";
+        try {
+            URL url = new URL(apiUrl);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+
+            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            String inputLine;
+            StringBuilder content = new StringBuilder();
+            while ((inputLine = in.readLine()) != null) {
+                content.append(inputLine);
+            }
+            in.close();
+
+            JSONObject json = new JSONObject(content.toString());
+            JSONArray features = json.getJSONObject("response").getJSONObject("GeoObjectCollection").getJSONArray("featureMember");
+
+            resultList.getItems().clear();
+            for (int i = 0; i < features.length(); i++) {
+                JSONObject geoObject = features.getJSONObject(i).getJSONObject("GeoObject");
+                String name = geoObject.getJSONObject("metaDataProperty").getJSONObject("GeocoderMetaData").getString("text");
+                String kind = geoObject.getJSONObject("metaDataProperty").getJSONObject("GeocoderMetaData").getString("kind");
+                if (kind.equals("house")) {
+                    name += " (организация)";
+                }
+                resultList.getItems().add(name);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void displayDetails(String selectedItem) {
+        // Выводим детали по объекту
+        detailsArea.setText("Информация об объекте: " + selectedItem);
+        // Загружаем соответствующее изображение на карте
+        // Пример: перезагружаем карту с фокусом на объект
+        webEngine.executeScript("map.setCenter([55.751574, 37.573856]);"); // здесь можно подставить координаты
+    }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+}
